@@ -1,0 +1,53 @@
+# time-id
+
+[![CircleCI](https://circleci.com/gh/codahale/time-id.svg?style=svg)](https://circleci.com/gh/codahale/time-id)
+
+Generates 25-character, time-ordered, k-sortable, URL-safe, globally unique identifiers.
+
+## Add to your project
+
+```xml
+<dependency>
+  <groupId>com.codahale</groupId>
+  <artifactId>time-id</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
+*Note: module name for Java 9+ is `com.codahale.timeid`.*
+
+## Use the thing
+
+```java
+import com.codahale.timeid.IdGenerator;
+
+class Example {
+  void doIt() {
+    final IdGenerator generator = new IdGenerator();
+    for (int i = 0; i < 100; i++) {
+      System.out.println(generator.generate()); 
+    }
+  } 
+}
+```
+
+## How it works
+
+The identifiers are Base64-encoded, using an alphabet which is both URL-safe and which preserves
+lexical ordering. Each ID consists of a 32-bit, big-endian timestamp (the number of seconds since
+1.4e9 seconds after the Unix epoch), plus 128 bits of random data.
+
+## Is it fast?
+
+```
+Benchmark            Mode  Cnt    Score    Error  Units
+Benchmarks.generate  avgt    5  918.981 ± 30.654  ns/op
+```
+
+It's pretty fast.
+
+## License
+
+Copyright © 2019 Coda Hale
+
+Distributed under the Apache License 2.0.
