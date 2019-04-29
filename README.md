@@ -31,6 +31,15 @@ class Example {
 }
 ```
 
+``` 
+1KJxM808$xmO4aiW$47L3GmXiV
+1KJxMAwxkcF_QFw_SoUXA5qdqV
+1KJxMCcNN_rv27PHbyZOq3GlPV
+1KJxMDkvVuOrKoQZZen9a5LF0k
+```
+
+etc. etc.
+
 ## How it works
 
 The identifiers are encoded with Radix-64 using an alphabet which is both URL-safe and which
