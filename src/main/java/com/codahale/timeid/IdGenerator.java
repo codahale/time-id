@@ -15,6 +15,7 @@
  */
 package com.codahale.timeid;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.time.Clock;
@@ -27,9 +28,10 @@ import java.time.Clock;
  * preserves lexical ordering. Each ID consists of a 32-bit, big-endian timestamp (the number of
  * seconds since 1.4e9 seconds after the Unix epoch), plus 128 bits of random data.
  */
-public class IdGenerator {
+public class IdGenerator implements Serializable {
   private static final char[] ALPHABET =
       "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz".toCharArray();
+  private static final long serialVersionUID = 5133358267293287137L;
   private final SecureRandom random;
   private final Clock clock;
 
