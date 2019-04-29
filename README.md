@@ -33,9 +33,9 @@ class Example {
 
 ## How it works
 
-The identifiers are Base64-encoded, using an alphabet which is both URL-safe and which preserves
-lexical ordering. Each ID consists of a 32-bit, big-endian timestamp (the number of seconds since
-1.4e9 seconds after the Unix epoch), plus 128 bits of random data.
+The identifiers are encoded with Radix-64 using an alphabet which is both URL-safe and which
+preserves lexical ordering. Each ID consists of a 32-bit, big-endian timestamp (the number of
+seconds since 1.4e9 seconds after the Unix epoch), plus 128 bits of random data.
 
 ## Is it fast?
 
