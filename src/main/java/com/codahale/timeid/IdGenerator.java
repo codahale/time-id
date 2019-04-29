@@ -21,7 +21,7 @@ import java.security.SecureRandom;
 import java.time.Clock;
 
 /**
- * {@link IdGenerator} generates 25-character, time-ordered, k-sortable, URL-safe, globally unique
+ * {@link IdGenerator} generates 26-character, time-ordered, k-sortable, URL-safe, globally unique
  * identifiers.
  *
  * <p>The identifiers are encoded with Radix-64, using an alphabet which is both URL-safe and which
@@ -30,7 +30,7 @@ import java.time.Clock;
  */
 public class IdGenerator implements Serializable {
   private static final char[] ALPHABET =
-      "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz".toCharArray();
+      "$0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz".toCharArray();
   private static final long serialVersionUID = 5133358267293287137L;
   private final SecureRandom random;
   private final Clock clock;
@@ -48,7 +48,7 @@ public class IdGenerator implements Serializable {
   /**
    * Generates a new ID.
    *
-   * @return a new 25-character ID
+   * @return a new 26-character ID
    */
   public String generate() {
     final int timestamp = (int) ((clock.millis() / 1000) - 1_400_000_000L);
@@ -59,7 +59,7 @@ public class IdGenerator implements Serializable {
   }
 
   private static String encode(byte[] b) {
-    final char[] out = new char[25];
+    final char[] out = new char[26];
     int idx = 0;
     for (int i = 0; i < 18; i += 3) {
       final int v = (b[i] << 16) + (b[i + 1] << 8) + (b[i + 2]);
@@ -68,7 +68,9 @@ public class IdGenerator implements Serializable {
       out[idx++] = ALPHABET[(v >> 6) & 63];
       out[idx++] = ALPHABET[v & 63];
     }
-    out[idx] = ALPHABET[((b[19] << 16) >> 18) & 63];
+    final int v = b[19] << 16;
+    out[idx++] = ALPHABET[(v >> 18) & 63];
+    out[idx] = ALPHABET[(v >> 12) & 63];
     return new String(out);
   }
 }

@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/codahale/time-id.svg?style=svg)](https://circleci.com/gh/codahale/time-id)
 
-Generates 25-character, time-ordered, k-sortable, URL-safe, globally unique identifiers.
+Generates 26-character, time-ordered, k-sortable, URL-safe, globally unique identifiers.
 
 ## Add to your project
 
@@ -37,6 +37,8 @@ The identifiers are encoded with Radix-64 using an alphabet which is both URL-sa
 preserves lexical ordering. Each ID consists of a 32-bit, big-endian timestamp (the number of
 seconds since 1.4e9 seconds after the Unix epoch), plus 128 bits of random data.
 
+(Technically, it's 118 bits of random data.)
+
 ## Is it fast?
 
 ```
@@ -44,7 +46,7 @@ Benchmark            Mode  Cnt    Score    Error  Units
 Benchmarks.generate  avgt    5  918.981 ± 30.654  ns/op
 ```
 
-It's pretty fast.
+It's pretty fast. About 90% of that time is spent generating the random data.
 
 ## License
 
