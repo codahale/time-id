@@ -69,10 +69,9 @@ public class IdGenerator implements Serializable {
     return encode(id);
   }
 
-  /**
-   * Reseeds the generator with random data, resetting its internal state.
-   */
-  public void reseed() {
+  /** Reseeds the generator with random data, resetting its internal state. */
+  public synchronized void reseed() {
+    checkState();
     final byte[] key = new byte[32];
     final byte[] iv = new byte[16];
     random.nextBytes(key);
@@ -84,7 +83,7 @@ public class IdGenerator implements Serializable {
     }
   }
 
-  private void checkState() {
+  private synchronized void checkState() {
     if (aes != null) {
       return;
     }
