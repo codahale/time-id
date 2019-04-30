@@ -17,8 +17,16 @@ package com.codahale.timeid;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Clock;
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.ShortBufferException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * {@link IdGenerator} generates 27-character, time-ordered, k-sortable, URL-safe, globally unique
@@ -27,13 +35,17 @@ import java.time.Clock;
  * <p>The identifiers are encoded with Radix-64, using an alphabet which is both URL-safe and which
  * preserves lexical ordering. Each ID consists of a 32-bit, big-endian timestamp (the number of
  * seconds since 1.4e9 seconds after the Unix epoch), plus 128 bits of random data.
+ *
+ * <p>Random data is produced via AES-256-CTR output using a random key and initial counter state.
  */
 public class IdGenerator implements Serializable {
   private static final char[] ALPHABET =
       "$0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz".toCharArray();
+  private static final byte[] ZEROS = new byte[16];
   private static final long serialVersionUID = 5133358267293287137L;
   private final SecureRandom random;
   private final Clock clock;
+  private transient Cipher aes;
 
   /** Creates a new {@link IdGenerator}. */
   public IdGenerator() {
@@ -52,9 +64,43 @@ public class IdGenerator implements Serializable {
    */
   public String generate() {
     final int timestamp = (int) ((clock.millis() / 1000) - 1_400_000_000L);
-    final byte[] rand = new byte[16];
-    random.nextBytes(rand);
-    return encode(ByteBuffer.allocate(21).putInt(timestamp).put(rand).array());
+    final byte[] id = ByteBuffer.allocate(21).putInt(timestamp).array();
+    generate(id);
+    return encode(id);
+  }
+
+  private void checkState() {
+    if (aes != null) {
+      return;
+    }
+
+    try {
+      this.aes = Cipher.getInstance("AES/CTR/NoPadding");
+    } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+      throw new UnsupportedOperationException(e);
+    }
+    reseed();
+  }
+
+  private void reseed() {
+    final byte[] key = new byte[32];
+    final byte[] iv = new byte[16];
+    random.nextBytes(key);
+    random.nextBytes(iv);
+    try {
+      aes.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"), new IvParameterSpec(iv));
+    } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  private void generate(byte[] out) {
+    checkState();
+    try {
+      aes.update(ZEROS, 0, 16, out, 4);
+    } catch (ShortBufferException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   private static String encode(byte[] b) {

@@ -10,7 +10,7 @@ Generates 27-character, time-ordered, k-sortable, URL-safe, globally unique iden
 <dependency>
   <groupId>com.codahale</groupId>
   <artifactId>time-id</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
@@ -40,20 +40,26 @@ class Example {
 
 etc. etc.
 
-## How it works
+## How does it work?
 
 The identifiers are encoded with Radix-64 using an alphabet which is both URL-safe and which
 preserves lexical ordering. Each ID consists of a 32-bit, big-endian timestamp (the number of
 seconds since 1.4e9 seconds after the Unix epoch), plus 128 bits of random data.
 
+For performance reasons, the random data is generated using AES-256 in CTR mode with a random key
+and initial counter state.
+
+The result is a 27-character, URL-safe string which can be used in systems which are unaware of its
+internal structure (e.g., databases, file systems) to store time-ordered data with unique IDs.
+
 ## Is it fast?
 
 ```
-Benchmark            Mode  Cnt    Score    Error  Units
-Benchmarks.generate  avgt    5  832.239 ± 23.014  ns/op
+Benchmark            Mode  Cnt   Score   Error  Units
+Benchmarks.generate  avgt    5  97.353 ± 1.164  ns/op
 ```
 
-It's pretty fast. About 90% of that time is spent generating the random data.
+It's pretty fast.
 
 ## License
 
