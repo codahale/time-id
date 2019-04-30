@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/codahale/time-id.svg?style=svg)](https://circleci.com/gh/codahale/time-id)
 
-Generates 26-character, time-ordered, k-sortable, URL-safe, globally unique identifiers.
+Generates 27-character, time-ordered, k-sortable, URL-safe, globally unique identifiers.
 
 ## Add to your project
 
@@ -10,7 +10,7 @@ Generates 26-character, time-ordered, k-sortable, URL-safe, globally unique iden
 <dependency>
   <groupId>com.codahale</groupId>
   <artifactId>time-id</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
 </dependency>
 ```
 
@@ -32,10 +32,10 @@ class Example {
 ```
 
 ``` 
-1KJxM808$xmO4aiW$47L3GmXiV
-1KJxMAwxkcF_QFw_SoUXA5qdqV
-1KJxMCcNN_rv27PHbyZOq3GlPV
-1KJxMDkvVuOrKoQZZen9a5LF0k
+1KKK6IIJF7TqCnck5XAgqi$UMVR
+1KKK6HdQPiMRn6no$9feUO5_99w
+1KKK6Kan5ELIxd$Uc82dTmXk2rc
+1KKK6Del_PkT8kr9y5K2yKbs1IV
 ```
 
 etc. etc.
@@ -52,7 +52,7 @@ seconds since 1.4e9 seconds after the Unix epoch), plus 128 bits of random data.
 
 ```
 Benchmark            Mode  Cnt    Score    Error  Units
-Benchmarks.generate  avgt    5  918.981 ± 30.654  ns/op
+Benchmarks.generate  avgt    5  832.239 ± 23.014  ns/op
 ```
 
 It's pretty fast. About 90% of that time is spent generating the random data.
