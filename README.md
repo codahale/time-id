@@ -46,8 +46,6 @@ The identifiers are encoded with Radix-64 using an alphabet which is both URL-sa
 preserves lexical ordering. Each ID consists of a 32-bit, big-endian timestamp (the number of
 seconds since 1.4e9 seconds after the Unix epoch), plus 128 bits of random data.
 
-(Technically, it's 118 bits of random data.)
-
 ## Is it fast?
 
 ```
