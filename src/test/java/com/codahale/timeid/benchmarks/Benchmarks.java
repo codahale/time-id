@@ -34,4 +34,9 @@ public class Benchmarks {
   public String generate() {
     return generator.generate();
   }
+
+  @Benchmark
+  public void reseed() {
+    generator.reseed();
+  }
 }

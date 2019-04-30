@@ -45,5 +45,9 @@ class IdGeneratorTest {
     final IdGenerator generator = new IdGenerator(random, clock);
 
     assertThat(generator.generate()).isEqualTo("1K9SjKdi04R7yr1Lw1tKEF62dO7").hasSize(27);
+
+    generator.reseed();
+
+    assertThat(generator.generate()).isEqualTo("1K9SjKdi04R7yr1Lw1tKEF62dO7").hasSize(27);
   }
 }

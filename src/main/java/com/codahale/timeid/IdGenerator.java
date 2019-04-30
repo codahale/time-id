@@ -69,6 +69,21 @@ public class IdGenerator implements Serializable {
     return encode(id);
   }
 
+  /**
+   * Reseeds the generator with random data, resetting its internal state.
+   */
+  public void reseed() {
+    final byte[] key = new byte[32];
+    final byte[] iv = new byte[16];
+    random.nextBytes(key);
+    random.nextBytes(iv);
+    try {
+      aes.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"), new IvParameterSpec(iv));
+    } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
   private void checkState() {
     if (aes != null) {
       return;
@@ -80,18 +95,6 @@ public class IdGenerator implements Serializable {
       throw new UnsupportedOperationException(e);
     }
     reseed();
-  }
-
-  private void reseed() {
-    final byte[] key = new byte[32];
-    final byte[] iv = new byte[16];
-    random.nextBytes(key);
-    random.nextBytes(iv);
-    try {
-      aes.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"), new IvParameterSpec(iv));
-    } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
-      throw new IllegalStateException(e);
-    }
   }
 
   private void generate(byte[] out) {
