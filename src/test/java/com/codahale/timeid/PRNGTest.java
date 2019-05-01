@@ -23,13 +23,25 @@ class PRNGTest {
   private final PRNG prng = new PRNG(new byte[32]);
 
   @Test
-  void prng() {
+  void output() {
+    final byte[] buf = new byte[16];
+    prng.generate(buf, 5, 6);
+
+    assertThat(buf)
+        .containsExactly(
+            0x00, 0x00, 0x00, 0x00, 0x00, 0xce, 0xa7, 0x40, 0x3d, 0x4d, 0x60, 0x00, 0x00, 0x00,
+            0x00, 0x00);
+  }
+
+  @Test
+  void offset() {
     final byte[] buf = new byte[10_000];
-    prng.generate(buf, 4, buf.length - 4);
+    prng.generate(buf, 5, buf.length - 5);
 
     assertThat(buf[0]).isZero();
     assertThat(buf[1]).isZero();
     assertThat(buf[2]).isZero();
     assertThat(buf[3]).isZero();
+    assertThat(buf[4]).isZero();
   }
 }
