@@ -51,7 +51,7 @@ class PRNG {
     }
   }
 
-  synchronized void generate(byte[] out) {
+  void generate(byte[] out) {
     if (offset == BUF_SIZE) {
       cycle();
     }
