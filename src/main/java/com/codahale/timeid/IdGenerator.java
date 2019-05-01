@@ -65,7 +65,7 @@ public class IdGenerator implements Serializable {
   public String generate() {
     final int timestamp = (int) ((clock.millis() / 1000) - 1_400_000_000L);
     final byte[] id = ByteBuffer.allocate(21).putInt(timestamp).array();
-    generate(id);
+    addRandom(id);
     return encode(id);
   }
 
@@ -96,7 +96,7 @@ public class IdGenerator implements Serializable {
     reseed();
   }
 
-  private void generate(byte[] out) {
+  private void addRandom(byte[] out) {
     checkState();
     try {
       aes.update(ZEROS, 0, 16, out, 4);
