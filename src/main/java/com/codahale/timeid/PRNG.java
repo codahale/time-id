@@ -51,20 +51,12 @@ class PRNG {
     }
   }
 
-  synchronized void generate(byte[] out, int pos, int len) {
-    while (true) {
-      final int remaining = buffer.length - offset;
-      if (remaining >= len) {
-        System.arraycopy(buffer, offset, out, pos, len);
-        offset += len;
-        return;
-      }
-
-      System.arraycopy(buffer, offset, out, pos, remaining);
-      pos += remaining;
-      len -= remaining;
+  synchronized void generate(byte[] out) {
+    if (offset > BUF_SIZE - BLOCK_SIZE) {
       cycle();
     }
+    System.arraycopy(buffer, offset, out, 4, BLOCK_SIZE);
+    offset += BLOCK_SIZE;
   }
 
   private void cycle() {

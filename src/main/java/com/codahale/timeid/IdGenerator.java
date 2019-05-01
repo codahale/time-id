@@ -58,7 +58,7 @@ public class IdGenerator implements Serializable {
     checkState();
     final int timestamp = (int) ((clock.millis() / 1000) - 1_400_000_000L);
     final byte[] id = ByteBuffer.allocate(21).putInt(timestamp).array();
-    prng.generate(id, 4, 16);
+    prng.generate(id);
     return encode(id);
   }
 

@@ -46,4 +46,14 @@ class IdGeneratorTest {
 
     assertThat(generator.generate()).isEqualTo("1K9SjFqwhCqp9s9x0uTdCGVgZ8Z").hasSize(27);
   }
+
+  @Test
+  void smokeTest() {
+    long sum = 0;
+    final IdGenerator generator = new IdGenerator();
+    for (int i = 0; i < 100_000; i++) {
+      sum += generator.generate().length();
+    }
+    assertThat(sum).isEqualTo(2700000L);
+  }
 }
