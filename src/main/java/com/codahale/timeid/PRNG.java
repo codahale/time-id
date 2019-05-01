@@ -52,7 +52,7 @@ class PRNG {
   }
 
   synchronized void generate(byte[] out) {
-    if (offset > BUF_SIZE - BLOCK_SIZE) {
+    if (offset == BUF_SIZE) {
       cycle();
     }
     System.arraycopy(buffer, offset, out, 4, BLOCK_SIZE);
