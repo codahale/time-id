@@ -56,14 +56,20 @@ public class IdGenerator implements Serializable {
    */
   public synchronized String generate() {
     checkState();
+    // Calculate the timestamp — number of seconds since 1.4e9 seconds past the Unix epoch.
     final int timestamp = (int) ((clock.millis() / 1000) - 1_400_000_000L);
+    // Encode the timestamp as the first 4 big-endian bytes of the ID. The buffer is an extra byte
+    // long to make it divisible by three, which simplifies the Radix-64 encoding.
     final byte[] id = ByteBuffer.allocate(21).putInt(timestamp).array();
+    // Append 16 bytes of random data.
     prng.generate(id);
+    // Encode the data with Radix-64.
     return encode(id);
   }
 
   private void checkState() {
     if (prng == null) {
+      // Initialize the PRNG using a randomly generated key.
       final byte[] key = new byte[PRNG.KEY_LEN];
       random.nextBytes(key);
       this.prng = new PRNG(key);
@@ -71,15 +77,23 @@ public class IdGenerator implements Serializable {
   }
 
   private static String encode(byte[] b) {
+    // Encode a 21-byte array using Radix-64.
     final char[] out = new char[28];
     int idx = 0;
+    // Split data into 24-bit blocks.
     for (int i = 0; i < b.length - 1; i += 3) {
-      int v = (b[i] << 16) + (b[i + 1] << 8) + (b[i + 2]);
+      // Load 24-bit integer from big-endian data.
+      final int v =
+          (Byte.toUnsignedInt(b[i]) << 16)
+              + (Byte.toUnsignedInt(b[i + 1]) << 8)
+              + Byte.toUnsignedInt(b[i + 2]);
+      // Encode the 24 bits over 4 characters.
       out[idx++] = ALPHABET[(v >> 18) & 63];
       out[idx++] = ALPHABET[(v >> 12) & 63];
       out[idx++] = ALPHABET[(v >> 6) & 63];
       out[idx++] = ALPHABET[v & 63];
     }
+    // Skip the last character, since it's always 0.
     return new String(out, 0, 27);
   }
 }
