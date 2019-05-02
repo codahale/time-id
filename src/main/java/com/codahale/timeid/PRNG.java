@@ -42,6 +42,7 @@ class PRNG {
       // Initialize the cipher using the initial key.
       this.aes = Cipher.getInstance("AES/CTR/NoPadding");
       aes.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"), IV);
+      // Prefill the buffer.
       cycle();
     } catch (NoSuchAlgorithmException
         | NoSuchPaddingException
@@ -52,11 +53,16 @@ class PRNG {
   }
 
   void generate(byte[] out) {
+    // Refill the buffer, if needed.
     if (offset == BUF_SIZE) {
       cycle();
     }
+
+    // Copy a block from the buffer into the output.
     System.arraycopy(buffer, offset, out, 4, BLOCK_SIZE);
+    // Zero out the used block.
     Arrays.fill(buffer, offset, offset + BLOCK_SIZE, (byte) 0);
+    // Increment the offset.
     offset += BLOCK_SIZE;
   }
 
