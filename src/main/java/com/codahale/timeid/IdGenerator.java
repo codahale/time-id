@@ -91,7 +91,11 @@ public class IdGenerator implements Serializable {
       out[idx++] = ALPHABET[(v >> 6) & 63];
       out[idx++] = ALPHABET[v & 63];
     }
-    // Skip the last character, since it's always 0.
+
+    // The underlying data is only 20 bytes, but that's padded out to 21 bytes to make the above
+    // algorithm simpler. As a result, we can skip the 28th character, since the lower 6 bits of the
+    // last chunk of input will always be zero. This also means the 27th character technically only
+    // encodes 4 bits of information, not 6.
     return new String(out, 0, 27);
   }
 }
