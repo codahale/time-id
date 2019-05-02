@@ -69,10 +69,8 @@ public class IdGenerator implements Serializable {
 
   private void checkState() {
     if (prng == null) {
-      // Initialize the PRNG using a randomly generated key.
-      final byte[] key = new byte[PRNG.KEY_LEN];
-      random.nextBytes(key);
-      this.prng = new PRNG(key);
+      // Initialize the PRNG.
+      this.prng = new PRNG(random);
     }
   }
 

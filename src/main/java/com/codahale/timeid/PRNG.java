@@ -18,6 +18,7 @@ package com.codahale.timeid;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -27,7 +28,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 /** PRNG generates pseudo-random data using AES-256-CTR in a fast-key-erasure construction. */
 class PRNG {
-  static final int KEY_LEN = 32;
+  private static final int KEY_LEN = 32;
   private static final int BLOCK_SIZE = 16;
   private static final IvParameterSpec IV = new IvParameterSpec(new byte[BLOCK_SIZE]);
   private static final int MAX_BLOCKS = 256;
@@ -36,10 +37,13 @@ class PRNG {
   private final byte[] buffer;
   private int offset;
 
-  PRNG(byte[] key) {
+  PRNG(SecureRandom random) {
     this.buffer = new byte[BUF_SIZE];
     try {
-      // Initialize the cipher using the initial key.
+      // Generate a random AES key.
+      final byte[] key = new byte[KEY_LEN];
+      random.nextBytes(key);
+      // Initialize the cipher using the random key.
       this.aes = Cipher.getInstance("AES/CTR/NoPadding");
       aes.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"), IV);
       // Prefill the buffer.
