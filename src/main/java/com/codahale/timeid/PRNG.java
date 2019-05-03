@@ -43,9 +43,11 @@ class PRNG {
       // Generate a random AES key.
       final byte[] key = new byte[KEY_LEN];
       random.nextBytes(key);
+
       // Initialize the cipher using the random key.
       this.aes = Cipher.getInstance("AES/CTR/NoPadding");
       aes.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"), IV);
+
       // Prefill the buffer.
       cycle();
     } catch (NoSuchAlgorithmException
@@ -64,9 +66,11 @@ class PRNG {
 
     // Copy a block from the buffer into the output.
     System.arraycopy(buffer, offset, out, 4, BLOCK_SIZE);
+
     // Zero out the used block.
     Arrays.fill(buffer, offset, offset + BLOCK_SIZE, (byte) 0);
-    // Increment the offset.
+
+    // Increment the offset to the next block.
     offset += BLOCK_SIZE;
   }
 
@@ -74,12 +78,15 @@ class PRNG {
     try {
       // Use the current key to encrypt a number of zero blocks.
       aes.update(buffer, 0, BUF_SIZE, buffer, 0);
+
       // Use the first two encrypted blocks as the new key.
       aes.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(buffer, 0, KEY_LEN, "AES"), IV);
-      // Don't use the key as output.
-      offset = KEY_LEN;
+
       // Zero out the key.
       Arrays.fill(buffer, 0, KEY_LEN, (byte) 0);
+
+      // Increment the offset to the third encrypted block.
+      offset = KEY_LEN;
     } catch (ShortBufferException | InvalidKeyException | InvalidAlgorithmParameterException e) {
       throw new IllegalStateException(e);
     }
