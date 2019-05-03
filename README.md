@@ -46,7 +46,7 @@ The identifiers are encoded with Radix-64 using an alphabet which is both URL-sa
 preserves lexical ordering. Each ID consists of a 32-bit, big-endian timestamp (the number of
 seconds since 1.4e9 seconds after the Unix epoch), plus 128 bits of random data.
 
-The random data is produced using AES-256-CTR in a
+The random data is produced using ChaCha20 in a
 [fast-key-erasure](https://blog.cr.yp.to/20170723-random.html) construction for performance reasons.
 
 The result is a 27-character, URL-safe string which can be used in systems which are unaware of its
@@ -56,7 +56,7 @@ internal structure (e.g., databases, file systems) to store time-ordered data wi
 
 ```
 Benchmark            Mode  Cnt   Score   Error  Units
-Benchmarks.generate  avgt    5  95.932 ± 5.546  ns/op
+Benchmarks.generate  avgt   25  113.438 ± 5.144  ns/op
 ```
 
 It's pretty fast.

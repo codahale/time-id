@@ -28,7 +28,7 @@ import java.time.Clock;
  * preserves lexical ordering. Each ID consists of a 32-bit, big-endian timestamp (the number of
  * seconds since 1.4e9 seconds after the Unix epoch), plus 128 bits of random data.
  *
- * <p>Random data is produced via AES-256-CTR in a fast-key-erasure construction.
+ * <p>Random data is produced via ChaCha20 in a fast-key-erasure construction.
  */
 public class IdGenerator implements Serializable {
   private static final char[] ALPHABET =
@@ -60,11 +60,11 @@ public class IdGenerator implements Serializable {
     final int timestamp = (int) ((clock.millis() / 1000) - 1_400_000_000L);
     // Encode the timestamp as the first 4 big-endian bytes of the ID. The buffer is an extra byte
     // long to make it divisible by three, which simplifies the Radix-64 encoding.
-    final byte[] id = ByteBuffer.allocate(21).putInt(timestamp).array();
+    final ByteBuffer buf = ByteBuffer.allocate(21).putInt(timestamp);
     // Append 16 bytes of random data.
-    prng.generate(id);
+    prng.append(buf);
     // Encode the data with Radix-64.
-    return encode(id);
+    return encode(buf.array());
   }
 
   private void checkState() {
