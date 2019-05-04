@@ -50,6 +50,6 @@ class IdGeneratorTest {
     for (int i = 0; i < 100_000; i++) {
       generator.generate();
     }
-    assertThat(generator.generate()).isEqualTo("1KDSjOA9hxfmtu9iirT1KnJQtOV").hasSize(27);
+    assertThat(generator.generate()).isEqualTo("1KDSjNvg5c$hZ_HgZ7tq47TfvSZ").hasSize(27);
   }
 }

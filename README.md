@@ -55,8 +55,8 @@ internal structure (e.g., databases, file systems) to store time-ordered data wi
 ## Is it fast?
 
 ```
-Benchmark            Mode  Cnt   Score   Error  Units
-Benchmarks.generate  avgt   25  113.438 ± 5.144  ns/op
+Benchmark            Mode  Cnt    Score   Error  Units
+Benchmarks.generate  avgt    5  221.966 ± 5.358  ns/op
 ```
 
 It's pretty fast.

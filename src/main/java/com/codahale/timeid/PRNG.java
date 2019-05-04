@@ -17,87 +17,61 @@ package com.codahale.timeid;
 
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
-import java.util.Arrays;
 
-/** PRNG generates pseudo-random data using ChaCha20 in a fast-key-erasure construction. */
+/**
+ * PRNG generates pseudo-random data using ChaCha20 in a fast-key-erasure construction. For each ID,
+ * it runs a ChaCha20 block transform using a 256-bit key, zero counter, and zero nonce. The first
+ * 256 bits of the 512-bit results are used as the new key; the next 128 bits are used for the ID;
+ * the remaining state is discarded.
+ *
+ * @see <a href="https://blog.cr.yp.to/20170723-random.html">Fast-key-erasure random-number
+ *     generators</a>
+ */
 class PRNG {
-  private static final int BLOCK_SIZE = 16; // ChaCha20 uses 512-bit blocks
-  private static final int MAX_BLOCKS = 64; // buffer 4K of output
   private static final int SIGMA0 = 0x61707865;
   private static final int SIGMA1 = 0x3320646e;
   private static final int SIGMA2 = 0x79622d32;
   private static final int SIGMA3 = 0x6b206574;
-  private final int[] key;
-  private final int[] buffer;
-  private int offset;
+  private int k0, k1, k2, k3, k4, k5, k6, k7;
 
   PRNG(SecureRandom random) {
     // Pick a random 256-bit key for ChaCha20.
-    this.key =
-        new int[] {
-          random.nextInt(),
-          random.nextInt(),
-          random.nextInt(),
-          random.nextInt(),
-          random.nextInt(),
-          random.nextInt(),
-          random.nextInt(),
-          random.nextInt(),
-        };
-
-    // Allocate a keystream buffer.
-    this.buffer = new int[BLOCK_SIZE * MAX_BLOCKS];
-
-    // Fill the keystream buffer and rekey.
-    cycle();
-  }
-
-  void append(ByteBuffer b) {
-    // Refill the buffer, if needed.
-    if (offset == buffer.length) {
-      cycle();
-    }
-
-    // Add 128 bits of data to the ID and zero out the used data.
-    for (int i = 0; i < 4; i++) {
-      final int v = buffer[offset];
-      buffer[offset++] = 0;
-      b.putInt(v);
-    }
-  }
-
-  private void cycle() {
-    // Generate N blocks of ChaCha20 output.
-    for (int i = 0; i < MAX_BLOCKS; i++) {
-      chacha20(key, i, buffer, i * BLOCK_SIZE);
-    }
-
-    // Use the first 256 bits as the new key.
-    System.arraycopy(buffer, 0, key, 0, 8);
-
-    // Zero out the key in the buffer..
-    Arrays.fill(buffer, 0, 8, 0);
-
-    // Skip the key in the buffer.
-    offset = 8;
+    this.k0 = random.nextInt();
+    this.k1 = random.nextInt();
+    this.k2 = random.nextInt();
+    this.k3 = random.nextInt();
+    this.k4 = random.nextInt();
+    this.k5 = random.nextInt();
+    this.k6 = random.nextInt();
+    this.k7 = random.nextInt();
   }
 
   @SuppressWarnings("Duplicates")
-  private static void chacha20(int[] key, int counter, int[] out, int outPos) {
+  void append(ByteBuffer b) {
+    // Keep a copy of the key so we can mutate it in place.
+    int k0 = this.k0;
+    int k1 = this.k1;
+    int k2 = this.k2;
+    int k3 = this.k3;
+    int k4 = this.k4;
+    int k5 = this.k5;
+    int k6 = this.k6;
+    int k7 = this.k7;
+
     // Initialize the block transform's state.
     int x00 = SIGMA0;
     int x01 = SIGMA1;
     int x02 = SIGMA2;
     int x03 = SIGMA3;
-    int x04 = key[0];
-    int x05 = key[1];
-    int x06 = key[2];
-    int x07 = key[3];
-    int x08 = key[4];
-    int x09 = key[5];
-    int x10 = key[6];
-    int x11 = key[7];
-    int x12 = counter;
+    int x04 = k0;
+    int x05 = k1;
+    int x06 = k2;
+    int x07 = k3;
+    int x08 = k4;
+    int x09 = k5;
+    int x10 = k6;
+    int x11 = k7;
+    int x12 = 0; // always use a zero counter
     int x13 = 0; // always use a zero nonce
     int x14 = 0;
     int x15 = 0;
@@ -201,22 +175,22 @@ class PRNG {
       x04 = Integer.rotateLeft(x04 ^ x09, 7);
     }
 
-    // Write output.
-    out[outPos++] = x00 + SIGMA0;
-    out[outPos++] = x01 + SIGMA1;
-    out[outPos++] = x02 + SIGMA2;
-    out[outPos++] = x03 + SIGMA3;
-    out[outPos++] = x04 + key[0];
-    out[outPos++] = x05 + key[1];
-    out[outPos++] = x06 + key[2];
-    out[outPos++] = x07 + key[3];
-    out[outPos++] = x08 + key[4];
-    out[outPos++] = x09 + key[5];
-    out[outPos++] = x10 + key[6];
-    out[outPos++] = x11 + key[7];
-    out[outPos++] = x12 + counter;
-    out[outPos++] = x13; // always use a zero nonce
-    out[outPos++] = x14;
-    out[outPos] = x15;
+    // Use words 0-7 as the new key.
+    this.k0 = x00 + SIGMA0;
+    this.k1 = x01 + SIGMA1;
+    this.k2 = x02 + SIGMA2;
+    this.k3 = x03 + SIGMA3;
+    this.k4 = x04 + k0;
+    this.k5 = x05 + k1;
+    this.k6 = x06 + k2;
+    this.k7 = x07 + k3;
+
+    // Use words 8-11 as the output.
+    b.putInt(x08 + k4);
+    b.putInt(x09 + k5);
+    b.putInt(x10 + k6);
+    b.putInt(x11 + k7);
+
+    // Discard words 12-15.
   }
 }
