@@ -66,7 +66,7 @@ public class IdGenerator implements Serializable {
     // Append 16 bytes of random data.
     prng.append(buf);
     // Encode the data with Radix-64.
-    return encode(buf.array());
+    return encode(buf);
   }
 
   private void checkState() {
@@ -76,17 +76,17 @@ public class IdGenerator implements Serializable {
     }
   }
 
-  private static String encode(byte[] b) {
+  private static String encode(ByteBuffer b) {
     // Encode a 21-byte array using Radix-64.
     final char[] out = new char[28];
     int idx = 0;
     // Split data into 24-bit blocks.
-    for (int i = 0; i < b.length - 1; i += 3) {
+    for (int i = 0; i < 20; i += 3) {
       // Load 24-bit integer from big-endian data.
       final int v =
-          (Byte.toUnsignedInt(b[i]) << 16)
-              + (Byte.toUnsignedInt(b[i + 1]) << 8)
-              + Byte.toUnsignedInt(b[i + 2]);
+          (Byte.toUnsignedInt(b.get(i)) << 16)
+              + (Byte.toUnsignedInt(b.get(i + 1)) << 8)
+              + Byte.toUnsignedInt(b.get(i + 2));
       // Encode the 24 bits over 4 characters.
       out[idx++] = ALPHABET[(v >> 18) & 63];
       out[idx++] = ALPHABET[(v >> 12) & 63];
