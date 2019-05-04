@@ -48,16 +48,6 @@ class PRNG {
 
   @SuppressWarnings("Duplicates")
   void append(ByteBuffer b) {
-    // Keep a copy of the key so we can mutate it in place.
-    int k0 = this.k0;
-    int k1 = this.k1;
-    int k2 = this.k2;
-    int k3 = this.k3;
-    int k4 = this.k4;
-    int k5 = this.k5;
-    int k6 = this.k6;
-    int k7 = this.k7;
-
     // Initialize the block transform's state.
     int x00 = SIGMA0;
     int x01 = SIGMA1;
@@ -175,21 +165,21 @@ class PRNG {
       x04 = Integer.rotateLeft(x04 ^ x09, 7);
     }
 
-    // Use words 0-7 as the new key.
-    this.k0 = x00 + SIGMA0;
-    this.k1 = x01 + SIGMA1;
-    this.k2 = x02 + SIGMA2;
-    this.k3 = x03 + SIGMA3;
-    this.k4 = x04 + k0;
-    this.k5 = x05 + k1;
-    this.k6 = x06 + k2;
-    this.k7 = x07 + k3;
-
     // Use words 8-11 as the output.
     b.putInt(x08 + k4);
     b.putInt(x09 + k5);
     b.putInt(x10 + k6);
     b.putInt(x11 + k7);
+
+    // Use words 0-7 as the new key. This is out-of-order to allow for in-place modification.
+    this.k4 = x04 + k0;
+    this.k5 = x05 + k1;
+    this.k6 = x06 + k2;
+    this.k7 = x07 + k3;
+    this.k0 = x00 + SIGMA0;
+    this.k1 = x01 + SIGMA1;
+    this.k2 = x02 + SIGMA2;
+    this.k3 = x03 + SIGMA3;
 
     // Discard words 12-15.
   }
