@@ -60,53 +60,29 @@ time-ordered data with unique IDs.
 
 ## Is it fast?
 
-### Latency
-
-```
-Result "com.codahale.timeid.benchmarks.Benchmarks.generate":
-  N = 8247423
-  mean =    287.138 ±(99.9%) 2.628 ns/op
-
-  Histogram, ns/op:
-    [      0.000,  250000.000) = 8247404 
-    [ 250000.000,  500000.000) = 2 
-    [ 500000.000,  750000.000) = 1 
-    [ 750000.000, 1000000.000) = 13 
-    [1000000.000, 1250000.000) = 1 
-    [1250000.000, 1500000.000) = 0 
-    [1500000.000, 1750000.000) = 0 
-    [1750000.000, 2000000.000) = 0 
-    [2000000.000, 2250000.000) = 0 
-    [2250000.000, 2500000.000) = 0 
-    [2500000.000, 2750000.000) = 0 
-    [2750000.000, 3000000.000) = 0 
-    [3000000.000, 3250000.000) = 0 
-    [3250000.000, 3500000.000) = 0 
-    [3500000.000, 3750000.000) = 1 
-
-  Percentiles, ns/op:
-      p(0.0000) =    231.000 ns/op
-     p(50.0000) =    260.000 ns/op
-     p(90.0000) =    276.000 ns/op
-     p(95.0000) =    284.000 ns/op
-     p(99.0000) =    431.000 ns/op
-     p(99.9000) =   7040.000 ns/op
-     p(99.9900) =  28800.000 ns/op
-     p(99.9990) =  68169.892 ns/op
-     p(99.9999) = 895598.789 ns/op
-    p(100.0000) = 3801088.000 ns/op
+``` 
+Benchmark                                           Mode       Cnt        Score    Error   Units
+Benchmarks.generate                               sample  34322015      274.584 ±  0.931   ns/op
+Benchmarks.generate:generate·p0.00                sample                174.000            ns/op
+Benchmarks.generate:generate·p0.50                sample                250.000            ns/op
+Benchmarks.generate:generate·p0.90                sample                268.000            ns/op
+Benchmarks.generate:generate·p0.95                sample                276.000            ns/op
+Benchmarks.generate:generate·p0.99                sample                449.000            ns/op
+Benchmarks.generate:generate·p0.999               sample               2644.000            ns/op
+Benchmarks.generate:generate·p0.9999              sample              22048.000            ns/op
+Benchmarks.generate:generate·p1.00                sample            2543616.000            ns/op
+Benchmarks.generate:·gc.alloc.rate                sample       100      286.548 ±  2.728  MB/sec
+Benchmarks.generate:·gc.alloc.rate.norm           sample       100       72.007 ±  0.001    B/op
+Benchmarks.generate:·gc.churn.G1_Eden_Space       sample       100      287.114 ±  3.817  MB/sec
+Benchmarks.generate:·gc.churn.G1_Eden_Space.norm  sample       100       72.149 ±  0.666    B/op
+Benchmarks.generate:·gc.churn.G1_Old_Gen          sample       100        0.001 ±  0.001  MB/sec
+Benchmarks.generate:·gc.churn.G1_Old_Gen.norm     sample       100       ≈ 10⁻³             B/op
+Benchmarks.generate:·gc.count                     sample       100     1646.000           counts
+Benchmarks.generate:·gc.time                      sample       100      997.000               ms
 ```
 
-### Throughput
-
-```
-Result "com.codahale.timeid.benchmarks.Benchmarks.generate":
-  4248401.562 ±(99.9%) 299471.264 ops/s [Average]
-  (min, avg, max) = (2331661.139, 4248401.562, 4358395.064), stdev = 399785.569
-  CI (99.9%): [3948930.299, 4547872.826] (assumes normal distribution)
-```
-
-It's pretty fast.
+It's pretty fast. Has a nicely flat latency profile. Doesn't generate a lot of garbage, either.
+Mostly just the `String` allocation. All the internal state is either reused or stack-allocated.
 
 ## License
 

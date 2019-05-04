@@ -15,7 +15,6 @@
  */
 package com.codahale.timeid;
 
-import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 
 /**
@@ -47,7 +46,7 @@ class PRNG {
   }
 
   @SuppressWarnings("Duplicates")
-  void append(ByteBuffer b) {
+  void append(byte[] b) {
     // Initialize the block transform's state.
     int x00 = SIGMA0;
     int x01 = SIGMA1;
@@ -166,10 +165,10 @@ class PRNG {
     }
 
     // Use words 8-11 as the output.
-    b.putInt(x08 + k4);
-    b.putInt(x09 + k5);
-    b.putInt(x10 + k6);
-    b.putInt(x11 + k7);
+    intToBytes(x08 + k4, b, 4);
+    intToBytes(x09 + k5, b, 8);
+    intToBytes(x10 + k6, b, 12);
+    intToBytes(x11 + k7, b, 16);
 
     // Use words 0-7 as the new key. This is out-of-order to allow for in-place modification.
     this.k4 = x04 + k0;
@@ -182,5 +181,12 @@ class PRNG {
     this.k3 = x03 + SIGMA3;
 
     // Discard words 12-15.
+  }
+
+  static void intToBytes(int v, byte[] b, int pos) {
+    b[pos++] = (byte) (v >> 24);
+    b[pos++] = (byte) (v >> 16);
+    b[pos++] = (byte) (v >> 8);
+    b[pos] = (byte) v;
   }
 }

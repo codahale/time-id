@@ -16,7 +16,6 @@
 package com.codahale.timeid;
 
 import java.io.Serializable;
-import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.time.Clock;
 
@@ -38,6 +37,8 @@ public class IdGenerator implements Serializable {
   private static final long serialVersionUID = 5133358267293287137L;
   private final SecureRandom random;
   private final Clock clock;
+  private final byte[] id;
+  private final char[] out;
   private transient PRNG prng;
 
   /** Creates a new {@link IdGenerator}. */
@@ -48,6 +49,11 @@ public class IdGenerator implements Serializable {
   IdGenerator(SecureRandom random, Clock clock) {
     this.random = random;
     this.clock = clock;
+    // The buffer is an extra byte long to make it divisible by three, which simplifies the
+    // Radix-64 encoding.
+    this.id = new byte[21];
+    // Similarly, this is 28 bytes, despite the last character always being "zero".
+    this.out = new char[28];
     checkState();
   }
 
@@ -60,13 +66,12 @@ public class IdGenerator implements Serializable {
     checkState();
     // Calculate the timestamp — number of seconds since 1.4e9 seconds past the Unix epoch.
     final int timestamp = (int) ((clock.millis() / 1000) - EPOCH_OFFSET);
-    // Encode the timestamp as the first 4 big-endian bytes of the ID. The buffer is an extra byte
-    // long to make it divisible by three, which simplifies the Radix-64 encoding.
-    final ByteBuffer buf = ByteBuffer.allocate(21).putInt(timestamp);
+    // Encode the timestamp as the first 4 big-endian bytes of the ID.
+    PRNG.intToBytes(timestamp, id, 0);
     // Append 16 bytes of random data.
-    prng.append(buf);
+    prng.append(id);
     // Encode the data with Radix-64.
-    return encode(buf);
+    return encode(id);
   }
 
   private void checkState() {
@@ -76,17 +81,16 @@ public class IdGenerator implements Serializable {
     }
   }
 
-  private static String encode(ByteBuffer b) {
+  private String encode(byte[] b) {
     // Encode a 21-byte array using Radix-64.
-    final char[] out = new char[28];
     int idx = 0;
     // Split data into 24-bit blocks.
-    for (int i = 0; i < 20; i += 3) {
+    for (int i = 0; i < b.length - 1; i += 3) {
       // Load 24-bit integer from big-endian data.
       final int v =
-          (Byte.toUnsignedInt(b.get(i)) << 16)
-              | (Byte.toUnsignedInt(b.get(i + 1)) << 8)
-              | Byte.toUnsignedInt(b.get(i + 2));
+          (Byte.toUnsignedInt(b[i]) << 16)
+              | (Byte.toUnsignedInt(b[i + 1]) << 8)
+              | Byte.toUnsignedInt(b[i + 2]);
       // Encode the 24 bits over 4 characters.
       out[idx++] = ALPHABET[(v >> 18) & 63];
       out[idx++] = ALPHABET[(v >> 12) & 63];
