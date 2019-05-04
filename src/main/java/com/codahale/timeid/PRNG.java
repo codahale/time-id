@@ -184,6 +184,7 @@ class PRNG {
   }
 
   static void intToBytes(int v, byte[] b, int pos) {
+    // post-Java 9, this is replaceable with a VarHandle for a minor performance boost
     b[pos++] = (byte) (v >> 24);
     b[pos++] = (byte) (v >> 16);
     b[pos++] = (byte) (v >> 8);
