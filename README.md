@@ -42,15 +42,21 @@ etc. etc.
 
 ## How does it work?
 
-The identifiers are encoded with Radix-64 using an alphabet which is both URL-safe and which
-preserves lexical ordering. Each ID consists of a 32-bit, big-endian timestamp (the number of
-seconds since 1.4e9 seconds after the Unix epoch), plus 128 bits of random data.
+Each ID consists of a 32-bit, big-endian timestamp (the number of seconds since 1.4e9 seconds after
+the Unix epoch), plus 128 bits of random data, for a total of 160 bits of information.
 
 The random data is produced using ChaCha20 in a
-[fast-key-erasure](https://blog.cr.yp.to/20170723-random.html) construction for performance reasons.
+[fast-key-erasure](https://blog.cr.yp.to/20170723-random.html) construction, with a per-ID iteration
+of the ChaCha20 block transform. The first 256 bits of the result are used as the key for the next
+ID; the next 128 bits are used in the ID; the remaining state is discarded. This construction is
+an order of magnitude faster than the fastest `java.util.SecureRandom` implementation, is
+nonblocking, has a very small memory footprint, operates in constant time, offers forward secrecy,
+requires no hardware support, and has performance characteristics independent of JVM configuration.
 
-The result is a 27-character, URL-safe string which can be used in systems which are unaware of its
-internal structure (e.g., databases, file systems) to store time-ordered data with unique IDs.
+The timestamp and the random data are encoded with Radix-64 using an alphabet which is both URL-safe
+and which preserves lexical ordering. The result is a 27-character, URL-safe string which can be
+used in systems which are unaware of its internal structure (e.g., databases, file systems) to store
+time-ordered data with unique IDs.
 
 ## Is it fast?
 
