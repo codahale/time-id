@@ -85,8 +85,8 @@ public class IdGenerator implements Serializable {
       // Load 24-bit integer from big-endian data.
       final int v =
           (Byte.toUnsignedInt(b.get(i)) << 16)
-              + (Byte.toUnsignedInt(b.get(i + 1)) << 8)
-              + Byte.toUnsignedInt(b.get(i + 2));
+              | (Byte.toUnsignedInt(b.get(i + 1)) << 8)
+              | Byte.toUnsignedInt(b.get(i + 2));
       // Encode the 24 bits over 4 characters.
       out[idx++] = ALPHABET[(v >> 18) & 63];
       out[idx++] = ALPHABET[(v >> 12) & 63];
