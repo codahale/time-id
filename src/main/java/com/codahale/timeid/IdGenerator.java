@@ -31,8 +31,10 @@ import java.time.Clock;
  * <p>Random data is produced via ChaCha20 in a fast-key-erasure construction.
  */
 public class IdGenerator implements Serializable {
+
   private static final char[] ALPHABET =
       "$0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz".toCharArray();
+  private static final long EPOCH_OFFSET = 1_400_000_000L;
   private static final long serialVersionUID = 5133358267293287137L;
   private final SecureRandom random;
   private final Clock clock;
@@ -57,7 +59,7 @@ public class IdGenerator implements Serializable {
   public synchronized String generate() {
     checkState();
     // Calculate the timestamp — number of seconds since 1.4e9 seconds past the Unix epoch.
-    final int timestamp = (int) ((clock.millis() / 1000) - 1_400_000_000L);
+    final int timestamp = (int) ((clock.millis() / 1000) - EPOCH_OFFSET);
     // Encode the timestamp as the first 4 big-endian bytes of the ID. The buffer is an extra byte
     // long to make it divisible by three, which simplifies the Radix-64 encoding.
     final ByteBuffer buf = ByteBuffer.allocate(21).putInt(timestamp);
