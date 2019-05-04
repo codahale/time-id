@@ -83,19 +83,18 @@ public class IdGenerator implements Serializable {
 
   private String encode(byte[] b) {
     // Encode a 21-byte array using Radix-64.
-    int idx = 0;
     // Split data into 24-bit blocks.
-    for (int i = 0; i < b.length - 1; i += 3) {
+    for (int i = 0, j = 0; i < b.length - 1; ) {
       // Load 24-bit integer from big-endian data.
       final int v =
-          (Byte.toUnsignedInt(b[i]) << 16)
-              | (Byte.toUnsignedInt(b[i + 1]) << 8)
-              | Byte.toUnsignedInt(b[i + 2]);
+          (Byte.toUnsignedInt(b[i++]) << 16)
+              | (Byte.toUnsignedInt(b[i++]) << 8)
+              | Byte.toUnsignedInt(b[i++]);
       // Encode the 24 bits over 4 characters.
-      out[idx++] = ALPHABET[(v >> 18) & 63];
-      out[idx++] = ALPHABET[(v >> 12) & 63];
-      out[idx++] = ALPHABET[(v >> 6) & 63];
-      out[idx++] = ALPHABET[v & 63];
+      out[j++] = ALPHABET[(v >> 18) & 63];
+      out[j++] = ALPHABET[(v >> 12) & 63];
+      out[j++] = ALPHABET[(v >> 6) & 63];
+      out[j++] = ALPHABET[v & 63];
     }
 
     // The underlying data is only 20 bytes, but that's padded out to 21 bytes to make the above
