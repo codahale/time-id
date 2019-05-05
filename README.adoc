@@ -26,10 +26,11 @@ NOTE: The module name for Java 9+ is `com.codahale.timeid`.
 import com.codahale.timeid.IdGenerator;
 
 class Example {
-  void doIt() {
+  public static void main(String[] args) throws InterruptedException {
     final IdGenerator generator = new IdGenerator();
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 5; i++) {
       System.out.println(generator.generate());
+      Thread.sleep(1000);
     }
   }
 }
@@ -37,16 +38,11 @@ class Example {
 
 .STDOUT
 ----
-1KnoOa5ebDQiUzMzhS_nhAOlDSB
-1KnoOijrCjrXcDxRUxLE472qyv$
-1KnoOX8k1FgWLo5Nbsk6Oyu00tg
-1KnoOdLAQxAaOI9pLgcgiruVe$J
-1KnoObqa4KtsvlsXuDOJevVfhmF
-1KnoOjArbhB1tnOwSDUwN0nMULB
-1KnoOjy$qAIUEyWphJzZZzbGCTR
-1KnoOVQ6veXU8PF8HhbqXnc7JwF
-1KnoOa5bOZVWkmwbze7ceKk_pnw
-1KnoOjpZ1HCv0QqHUE2Em3U7C8k
+1KoN0_AUFKtrzGS_vay5hlOyCFF
+1KoN1$8dtcqssctVzGFD1O900o$
+1KoN1Q7uJBNHyQuEo8y$eND_2dk
+1KoN1VejHzyMi1MJLNM4sqtmNJ3
+1KoN1vqpjk0nUfE25pUjZXCFLjN
 ----
 
 TIP: `IdGenerator` is thread-safe but synchronized.
