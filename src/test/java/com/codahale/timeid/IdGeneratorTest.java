@@ -44,7 +44,7 @@ class IdGeneratorTest {
   }
 
   private static class FakeClock extends Clock {
-    long timestamp;
+    private long timestamp;
 
     private FakeClock(long timestamp) {
       this.timestamp = timestamp;
