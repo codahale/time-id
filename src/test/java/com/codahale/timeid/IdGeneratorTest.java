@@ -16,8 +16,6 @@
 package com.codahale.timeid;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,16 +30,6 @@ class IdGeneratorTest {
   @Test
   void generating() {
     final SecureRandom random = mock(SecureRandom.class);
-    doAnswer(
-            invocation -> {
-              final byte[] b = invocation.getArgument(0);
-              for (int i = 0; i < b.length; i++) {
-                b[i] = (byte) i;
-              }
-              return null;
-            })
-        .when(random)
-        .nextBytes(any());
     when(random.nextInt()).thenReturn(200);
     final Clock clock = Clock.fixed(Instant.ofEpochMilli(1556474813000L), ZoneOffset.UTC);
     final IdGenerator generator = new IdGenerator(random, clock);
