@@ -170,10 +170,10 @@ class PRNG {
     }
 
     // Use words 8-11 as the output.
-    intToBytes(x08 + k4, b, 4);
-    intToBytes(x09 + k5, b, 8);
-    intToBytes(x10 + k6, b, 12);
-    intToBytes(x11 + k7, b, 16);
+    littleEndian(x08 + k4, b, 4);
+    littleEndian(x09 + k5, b, 8);
+    littleEndian(x10 + k6, b, 12);
+    littleEndian(x11 + k7, b, 16);
 
     // Use words 0-7 as the new key. This is out-of-order to allow for in-place modification.
     this.k4 = x04 + k0;
@@ -188,11 +188,11 @@ class PRNG {
     // Discard words 12-15.
   }
 
-  static void intToBytes(int v, byte[] b, int pos) {
+  private static void littleEndian(int v, byte[] b, int pos) {
     // post-Java 9, this is replaceable with a VarHandle for a minor performance boost
-    b[pos++] = (byte) (v >> 24);
-    b[pos++] = (byte) (v >> 16);
+    b[pos++] = (byte) v;
     b[pos++] = (byte) (v >> 8);
-    b[pos] = (byte) v;
+    b[pos++] = (byte) (v >> 16);
+    b[pos] = (byte) (v >> 24);
   }
 }

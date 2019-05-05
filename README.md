@@ -61,24 +61,24 @@ time-ordered data with unique IDs.
 ## Is it fast?
 
 ``` 
-Benchmark                                           Mode       Cnt        Score    Error   Units
-Benchmarks.generate                               sample  34322015      274.584 ±  0.931   ns/op
-Benchmarks.generate:generate·p0.00                sample                174.000            ns/op
-Benchmarks.generate:generate·p0.50                sample                250.000            ns/op
-Benchmarks.generate:generate·p0.90                sample                268.000            ns/op
-Benchmarks.generate:generate·p0.95                sample                276.000            ns/op
-Benchmarks.generate:generate·p0.99                sample                449.000            ns/op
-Benchmarks.generate:generate·p0.999               sample               2644.000            ns/op
-Benchmarks.generate:generate·p0.9999              sample              22048.000            ns/op
-Benchmarks.generate:generate·p1.00                sample            2543616.000            ns/op
-Benchmarks.generate:·gc.alloc.rate                sample       100      286.548 ±  2.728  MB/sec
-Benchmarks.generate:·gc.alloc.rate.norm           sample       100       72.007 ±  0.001    B/op
-Benchmarks.generate:·gc.churn.G1_Eden_Space       sample       100      287.114 ±  3.817  MB/sec
-Benchmarks.generate:·gc.churn.G1_Eden_Space.norm  sample       100       72.149 ±  0.666    B/op
-Benchmarks.generate:·gc.churn.G1_Old_Gen          sample       100        0.001 ±  0.001  MB/sec
-Benchmarks.generate:·gc.churn.G1_Old_Gen.norm     sample       100       ≈ 10⁻³             B/op
-Benchmarks.generate:·gc.count                     sample       100     1646.000           counts
-Benchmarks.generate:·gc.time                      sample       100      997.000               ms
+Benchmark                                           Mode      Cnt        Score    Error   Units
+Benchmarks.generate                               sample  7041460      270.418 ±  2.743   ns/op
+Benchmarks.generate:generate·p0.00                sample               211.000            ns/op
+Benchmarks.generate:generate·p0.50                sample               246.000            ns/op
+Benchmarks.generate:generate·p0.90                sample               259.000            ns/op
+Benchmarks.generate:generate·p0.95                sample               264.000            ns/op
+Benchmarks.generate:generate·p0.99                sample               405.000            ns/op
+Benchmarks.generate:generate·p0.999               sample              3516.000            ns/op
+Benchmarks.generate:generate·p0.9999              sample             25472.000            ns/op
+Benchmarks.generate:generate·p1.00                sample           2912256.000            ns/op
+Benchmarks.generate:·gc.alloc.rate                sample       20      293.922 ±  4.292  MB/sec
+Benchmarks.generate:·gc.alloc.rate.norm           sample       20       72.007 ±  0.001    B/op
+Benchmarks.generate:·gc.churn.G1_Eden_Space       sample       20      293.985 ±  8.721  MB/sec
+Benchmarks.generate:·gc.churn.G1_Eden_Space.norm  sample       20       72.017 ±  1.684    B/op
+Benchmarks.generate:·gc.churn.G1_Old_Gen          sample       20        0.001 ±  0.001  MB/sec
+Benchmarks.generate:·gc.churn.G1_Old_Gen.norm     sample       20       ≈ 10⁻⁴             B/op
+Benchmarks.generate:·gc.count                     sample       20      334.000           counts
+Benchmarks.generate:·gc.time                      sample       20      208.000               ms
 ```
 
 It's pretty fast. Has a nicely flat latency profile. Doesn't generate a lot of garbage, either.

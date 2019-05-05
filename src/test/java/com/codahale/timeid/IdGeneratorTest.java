@@ -46,10 +46,10 @@ class IdGeneratorTest {
     final Clock clock = Clock.fixed(Instant.ofEpochMilli(1556474813000L), ZoneOffset.UTC);
     final IdGenerator generator = new IdGenerator(random, clock);
 
-    assertThat(generator.generate()).isEqualTo("1KDSjUFWZq$$atrlGWkUGDtHlYc").hasSize(27);
+    assertThat(generator.generate()).isEqualTo("1KDSjL1I7UIlbOg$G0wRGYf5Jis").hasSize(27);
     for (int i = 0; i < 100_000; i++) {
       generator.generate();
     }
-    assertThat(generator.generate()).isEqualTo("1KDSjJNASxprjrrmQEPjv8vSvjw").hasSize(27);
+    assertThat(generator.generate()).isEqualTo("1KDSjSpr1oQmUQxrv9zqQEzirOs").hasSize(27);
   }
 }

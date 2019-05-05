@@ -67,7 +67,11 @@ public class IdGenerator implements Serializable {
     // Calculate the timestamp — number of seconds since 1.4e9 seconds past the Unix epoch.
     final int timestamp = (int) ((clock.millis() / 1000) - EPOCH_OFFSET);
     // Encode the timestamp as the first 4 big-endian bytes of the ID.
-    PRNG.intToBytes(timestamp, id, 0);
+    // post-Java 9, this is replaceable with a VarHandle for a minor performance boost
+    id[0] = (byte) (timestamp >> 24);
+    id[1] = (byte) (timestamp >> 16);
+    id[2] = (byte) (timestamp >> 8);
+    id[3] = (byte) timestamp;
     // Append 16 bytes of random data.
     prng.append(id);
     // Encode the data with Radix-64.
