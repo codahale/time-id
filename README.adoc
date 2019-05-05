@@ -4,7 +4,7 @@ image::https://circleci.com/gh/codahale/time-id.svg?style=svg[link=https://circl
 
 Generates 27-character, time-ordered, k-sortable, URL-safe, globally unique identifiers.
 
-== Add To Your Project
+== How do I add it to my project?
 
 .pom.xml
 [source,xml]
@@ -18,7 +18,7 @@ Generates 27-character, time-ordered, k-sortable, URL-safe, globally unique iden
 
 NOTE: The module name for Java 9+ is `com.codahale.timeid`.
 
-== Use It
+== How do I use it?
 
 .Example.java
 [source,java]
