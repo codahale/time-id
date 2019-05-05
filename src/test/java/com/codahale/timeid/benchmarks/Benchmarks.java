@@ -16,6 +16,7 @@
 package com.codahale.timeid.benchmarks;
 
 import com.codahale.timeid.IdGenerator;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -31,7 +32,12 @@ public class Benchmarks {
   private final IdGenerator generator = new IdGenerator();
 
   @Benchmark
-  public String generate() {
+  public String timeId() {
     return generator.generate();
+  }
+
+  @Benchmark
+  public UUID uuidv4() {
+    return UUID.randomUUID();
   }
 }
