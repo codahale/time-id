@@ -10,7 +10,7 @@ Generates 27-character, time-ordered, k-sortable, URL-safe, globally unique iden
 <dependency>
   <groupId>com.codahale</groupId>
   <artifactId>time-id</artifactId>
-  <version>0.4.1</version>
+  <version>0.4.2</version>
 </dependency>
 ```
 
