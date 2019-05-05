@@ -23,6 +23,11 @@ import java.security.SecureRandom;
  * 256 bits of the 512-bit results are used as the new key; the next 128 bits are used for the ID;
  * the remaining state is discarded.
  *
+ * <p>This construction is an order of magnitude faster than the fastest {@link SecureRandom}
+ * implementation, is nonblocking, has a very small memory footprint, operates in constant time,
+ * offers forward secrecy, requires no hardware support, and has performance characteristics
+ * independent of JVM configuration.
+ *
  * @see <a href="https://blog.cr.yp.to/20170723-random.html">Fast-key-erasure random-number
  *     generators</a>
  */
