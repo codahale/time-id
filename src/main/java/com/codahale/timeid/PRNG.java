@@ -65,8 +65,8 @@ class PRNG {
     int x09 = k5;
     int x10 = k6;
     int x11 = k7;
-    int x12 = 0; // always use a zero counter
-    int x13 = 0; // always use a zero nonce
+    int x12 = 1; // counter = 0x00000001
+    int x13 = 0; // nonce   = 0x000000000000000000000000
     int x14 = 0;
     int x15 = 0;
 
