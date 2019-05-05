@@ -6,21 +6,19 @@ Generates 27-character, time-ordered, k-sortable, URL-safe, globally unique iden
 
 == Add To Your Project
 
-```xml
+.pom.xml
+[source,xml]
+----
 <dependency>
   <groupId>com.codahale</groupId>
   <artifactId>time-id</artifactId>
   <version>0.4.3</version>
 </dependency>
-```
+----
 
-[NOTE]
-====
-The module name for Java 9+ is `com.codahale.timeid`.
-====
+NOTE: The module name for Java 9+ is `com.codahale.timeid`.
 
 == Use It
-
 
 .Example.java
 [source,java]
@@ -38,7 +36,6 @@ class Example {
 ----
 
 .STDOUT
-[source]
 ----
 1KnoOa5ebDQiUzMzhS_nhAOlDSB
 1KnoOijrCjrXcDxRUxLE472qyv$
@@ -52,14 +49,8 @@ class Example {
 1KnoOjpZ1HCv0QqHUE2Em3U7C8k
 ----
 
-etc. etc.
-
-[NOTE]
-====
-
-`IdGenerator` is thread-safe but synchronized. Highly concurrent applications may wish to use thread-local instances.
-
-====
+TIP: `IdGenerator` is thread-safe but synchronized.
+Highly concurrent applications may wish to use thread-local instances.
 
 == How does it work?
 
@@ -75,7 +66,6 @@ The result is a 27-character, URL-safe string which can be used in systems which
 == Is it fast?
 
 .benchmarks.txt
-[source]
 ----
 Benchmark                                           Mode      Cnt        Score    Error   Units
 Benchmarks.generate                               sample  7041460      270.418 ±  2.743   ns/op
