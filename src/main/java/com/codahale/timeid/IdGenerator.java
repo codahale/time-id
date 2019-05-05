@@ -38,7 +38,7 @@ public class IdGenerator implements Serializable {
   private final SecureRandom random;
   private final Clock clock;
   private final byte[] id;
-  private final char[] out;
+  private final byte[] out;
   private transient PRNG prng;
 
   /** Creates a new {@link IdGenerator}. */
@@ -53,7 +53,7 @@ public class IdGenerator implements Serializable {
     // Radix-64 encoding.
     this.id = new byte[21];
     // Similarly, this is 28 bytes, despite the last character always being "zero".
-    this.out = new char[28];
+    this.out = new byte[28];
     checkState();
   }
 
@@ -85,6 +85,7 @@ public class IdGenerator implements Serializable {
     }
   }
 
+  @SuppressWarnings("deprecation")
   private String encode(byte[] b) {
     // Encode a 21-byte array using Radix-64.
     // Split data into 24-bit blocks.
@@ -95,16 +96,16 @@ public class IdGenerator implements Serializable {
               | (Byte.toUnsignedInt(b[i++]) << 8)
               | Byte.toUnsignedInt(b[i++]);
       // Encode the 24 bits over 4 characters.
-      out[j++] = ALPHABET[(v >> 18) & 63];
-      out[j++] = ALPHABET[(v >> 12) & 63];
-      out[j++] = ALPHABET[(v >> 6) & 63];
-      out[j++] = ALPHABET[v & 63];
+      out[j++] = (byte) ALPHABET[(v >> 18) & 63];
+      out[j++] = (byte) ALPHABET[(v >> 12) & 63];
+      out[j++] = (byte) ALPHABET[(v >> 6) & 63];
+      out[j++] = (byte) ALPHABET[v & 63];
     }
 
     // The underlying data is only 20 bytes, but that's padded out to 21 bytes to make the above
     // algorithm simpler. As a result, we can skip the 28th character, since the lower 6 bits of the
     // last chunk of input will always be zero. This also means the 27th character technically only
     // encodes 4 bits of information, not 6.
-    return new String(out, 0, 27);
+    return new String(out, 0, 0, 27);
   }
 }

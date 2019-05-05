@@ -37,7 +37,7 @@ public class Benchmarks {
   }
 
   @Benchmark
-  public UUID uuidv4() {
-    return UUID.randomUUID();
+  public String uuidv4() {
+    return UUID.randomUUID().toString();
   }
 }
