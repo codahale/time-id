@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.codahale</groupId>
     <artifactId>common-pom</artifactId>
-    <version>0.0.19</version>
+    <version>0.0.20</version>
   </parent>
 
   <artifactId>time-id</artifactId>
