@@ -19,6 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
@@ -41,6 +46,21 @@ class IdGeneratorTest {
       generator.generate();
     }
     assertThat(generator.generate()).isEqualTo("1KDT7Ov7ZJ4BKneIK5PrtYkWQUs").hasSize(27);
+  }
+
+  @Test
+  void serializing() throws IOException, ClassNotFoundException {
+    final IdGenerator genOut = new IdGenerator();
+    final ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+    try (ObjectOutputStream out = new ObjectOutputStream(bytesOut)) {
+      out.writeObject(genOut);
+    }
+
+    final ByteArrayInputStream bytesIn = new ByteArrayInputStream(bytesOut.toByteArray());
+    try (ObjectInputStream in = new ObjectInputStream(bytesIn)) {
+      final IdGenerator genIn = (IdGenerator) in.readObject();
+      assertThat(genIn.generate()).hasSize(27);
+    }
   }
 
   private static class FakeClock extends Clock {
