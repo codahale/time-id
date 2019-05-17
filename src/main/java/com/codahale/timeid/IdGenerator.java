@@ -15,7 +15,9 @@
  */
 package com.codahale.timeid;
 
-import java.io.Serializable;
+import java.io.Externalizable;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.security.SecureRandom;
 import java.time.Clock;
 
@@ -29,17 +31,15 @@ import java.time.Clock;
  *
  * <p>Random data is produced via ChaCha20 in a fast-key-erasure construction.
  */
-public class IdGenerator implements Serializable {
-
+public class IdGenerator implements Externalizable {
   private static final char[] ALPHABET =
       "$0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz".toCharArray();
   private static final long EPOCH_OFFSET = 1_400_000_000L;
   private static final long serialVersionUID = 5133358267293287137L;
-  private final SecureRandom random;
   private final Clock clock;
   private final byte[] id;
   private final byte[] out;
-  private transient PRNG prng;
+  private final PRNG prng;
 
   /** Creates a new {@link IdGenerator}. */
   public IdGenerator() {
@@ -47,14 +47,13 @@ public class IdGenerator implements Serializable {
   }
 
   IdGenerator(SecureRandom random, Clock clock) {
-    this.random = random;
     this.clock = clock;
     // The buffer is an extra byte long to make it divisible by three, which simplifies the
     // Radix-64 encoding.
     this.id = new byte[21];
     // Similarly, this is 28 bytes, despite the last character always being "zero".
     this.out = new byte[28];
-    checkState();
+    this.prng = new PRNG(random);
   }
 
   /**
@@ -63,7 +62,6 @@ public class IdGenerator implements Serializable {
    * @return a new 27-character ID
    */
   public synchronized String generate() {
-    checkState();
     // Calculate the timestamp — number of seconds since 1.4e9 seconds past the Unix epoch.
     final int timestamp = (int) ((clock.millis() / 1000) - EPOCH_OFFSET);
     // Encode the timestamp as the first 4 big-endian bytes of the ID.
@@ -76,13 +74,6 @@ public class IdGenerator implements Serializable {
     prng.append(id);
     // Encode the data with Radix-64.
     return encode(id);
-  }
-
-  private void checkState() {
-    if (prng == null) {
-      // Initialize the PRNG.
-      this.prng = new PRNG(random);
-    }
   }
 
   @SuppressWarnings("deprecation")
@@ -108,4 +99,10 @@ public class IdGenerator implements Serializable {
     // encodes 4 bits of information, not 6.
     return new String(out, 0, 0, 27);
   }
+
+  @Override
+  public void writeExternal(ObjectOutput out) {}
+
+  @Override
+  public void readExternal(ObjectInput in) {}
 }
