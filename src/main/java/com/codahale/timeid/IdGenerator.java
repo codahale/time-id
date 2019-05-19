@@ -85,16 +85,13 @@ public class IdGenerator implements Externalizable {
    * @return the ID's timestamp
    */
   public static Instant createdAt(String id) {
-    final char[] chars = id.toCharArray();
-    final int a =
-        (Arrays.binarySearch(ALPHABET, chars[0]) << 18)
-            + (Arrays.binarySearch(ALPHABET, chars[1]) << 12)
-            + (Arrays.binarySearch(ALPHABET, chars[2]) << 6)
-            + (Arrays.binarySearch(ALPHABET, chars[3]));
-    final int b =
-        (Arrays.binarySearch(ALPHABET, chars[4]) << 18)
-            + (Arrays.binarySearch(ALPHABET, chars[5]) << 12);
-    final int timestamp = (a << 8) + ((b >> 16) & 0xff);
+    final int timestamp =
+        (Arrays.binarySearch(ALPHABET, id.charAt(0)) << 26)
+            + (Arrays.binarySearch(ALPHABET, id.charAt(1)) << 20)
+            + (Arrays.binarySearch(ALPHABET, id.charAt(2)) << 14)
+            + (Arrays.binarySearch(ALPHABET, id.charAt(3)) << 8)
+            + (Arrays.binarySearch(ALPHABET, id.charAt(4)) << 2)
+            + (Arrays.binarySearch(ALPHABET, id.charAt(5)) >> 4);
     return Instant.ofEpochMilli((timestamp + EPOCH_OFFSET) * 1000);
   }
 
