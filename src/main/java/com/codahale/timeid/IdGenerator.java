@@ -93,9 +93,7 @@ public class IdGenerator implements Externalizable {
             + (Arrays.binarySearch(ALPHABET, chars[3]));
     final int b =
         (Arrays.binarySearch(ALPHABET, chars[4]) << 18)
-            + (Arrays.binarySearch(ALPHABET, chars[5]) << 12)
-            + (Arrays.binarySearch(ALPHABET, chars[6]) << 6)
-            + (Arrays.binarySearch(ALPHABET, chars[7]));
+            + (Arrays.binarySearch(ALPHABET, chars[5]) << 12);
     final int timestamp = (a << 8) + ((b >> 16) & 0xff);
     return Instant.ofEpochMilli((timestamp + EPOCH_OFFSET) * 1000);
   }
