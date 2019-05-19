@@ -34,6 +34,13 @@ import java.util.Arrays;
  * <p>Random data is produced via ChaCha20 in a fast-key-erasure construction.
  */
 public class IdGenerator implements Externalizable {
+  /** Lexically, the first possible ID. */
+  @SuppressWarnings("WeakerAccess")
+  public static final String MIN_VALUE = "$$$$$$$$$$$$$$$$$$$$$$$$$$$";
+  /** Lexically, the last possible ID. */
+  @SuppressWarnings("WeakerAccess")
+  public static final String MAX_VALUE = "zzzzzzzzzzzzzzzzzzzzzzzzzzz";
+
   private static final char[] ALPHABET =
       "$0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz".toCharArray();
   private static final long EPOCH_OFFSET = 1_400_000_000L;

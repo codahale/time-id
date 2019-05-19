@@ -41,11 +41,22 @@ class IdGeneratorTest {
 
     final IdGenerator generator = new IdGenerator(random, clock);
 
-    assertThat(generator.generate()).isEqualTo("1KDSjKyxshmGcaS2CWctXqY0wEB").hasSize(27);
+    assertThat(generator.generate())
+        .isEqualTo("1KDSjKyxshmGcaS2CWctXqY0wEB")
+        .hasSize(27)
+        .isLessThan(IdGenerator.MAX_VALUE)
+        .isGreaterThan(IdGenerator.MIN_VALUE);
     for (int i = 0; i < 100_000; i++) {
-      assertThat(generator.generate()).hasSize(27);
+      assertThat(generator.generate())
+          .hasSize(27)
+          .isLessThan(IdGenerator.MAX_VALUE)
+          .isGreaterThan(IdGenerator.MIN_VALUE);
     }
-    assertThat(generator.generate()).isEqualTo("1KDT7Ov7ZJ4BKneIK5PrtYkWQUs").hasSize(27);
+    assertThat(generator.generate())
+        .isEqualTo("1KDT7Ov7ZJ4BKneIK5PrtYkWQUs")
+        .hasSize(27)
+        .isLessThan(IdGenerator.MAX_VALUE)
+        .isGreaterThan(IdGenerator.MIN_VALUE);
   }
 
   @Test
