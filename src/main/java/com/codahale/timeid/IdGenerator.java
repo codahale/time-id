@@ -20,6 +20,8 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.security.SecureRandom;
 import java.time.Clock;
+import java.time.Instant;
+import java.util.Arrays;
 
 /**
  * {@link IdGenerator} generates 27-character, time-ordered, k-sortable, URL-safe, globally unique
@@ -74,6 +76,28 @@ public class IdGenerator implements Externalizable {
     prng.append(id);
     // Encode the data with Radix-64.
     return encode(id);
+  }
+
+  /**
+   * Returns the {@link Instant} at which the ID was created.
+   *
+   * @param id a time ID
+   * @return the ID's timestamp
+   */
+  public static Instant createdAt(String id) {
+    final char[] chars = id.toCharArray();
+    final int a =
+        (Arrays.binarySearch(ALPHABET, chars[0]) << 18)
+            + (Arrays.binarySearch(ALPHABET, chars[1]) << 12)
+            + (Arrays.binarySearch(ALPHABET, chars[2]) << 6)
+            + (Arrays.binarySearch(ALPHABET, chars[3]));
+    final int b =
+        (Arrays.binarySearch(ALPHABET, chars[4]) << 18)
+            + (Arrays.binarySearch(ALPHABET, chars[5]) << 12)
+            + (Arrays.binarySearch(ALPHABET, chars[6]) << 6)
+            + (Arrays.binarySearch(ALPHABET, chars[7]));
+    final int timestamp = (a << 8) + ((b >> 16) & 0xff);
+    return Instant.ofEpochMilli((timestamp + EPOCH_OFFSET) * 1000);
   }
 
   private String encode(byte[] b) {

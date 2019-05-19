@@ -49,6 +49,17 @@ class IdGeneratorTest {
   }
 
   @Test
+  void decoding() {
+    final SecureRandom random = mock(SecureRandom.class);
+    when(random.nextInt()).thenReturn(1, 2, 3, 4, 5, 6, 7, 8);
+    final Clock clock = new FakeClock(1556474813000L);
+
+    final IdGenerator generator = new IdGenerator(random, clock);
+    final String id = generator.generate();
+    assertThat(IdGenerator.createdAt(id)).isEqualTo("2019-04-28T18:06:53Z");
+  }
+
+  @Test
   void serializing() throws IOException, ClassNotFoundException {
     final IdGenerator genOut = new IdGenerator();
     final ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
